@@ -4,6 +4,7 @@ import Income from "./components/Income.vue";
 import Expenses from "./components/Expenses.vue";
 import Balance from "./components/Balance.vue";
 import Department from "./components/Department.vue";
+import Salary from "./components/Salary.vue";
 </script>
 
 <template>
@@ -21,6 +22,9 @@ import Department from "./components/Department.vue";
       </div>
       <div class="p-8">
         <Department />
+      </div>
+      <div class="p-8">
+        <Salary />
       </div>
     </div>
   </div>
