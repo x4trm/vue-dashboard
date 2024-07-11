@@ -6,7 +6,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { Bar } from "vue-chartjs";
 import {
   Chart as ChartJS,
@@ -33,25 +33,37 @@ const getBalanceColor = (data: number[]) => {
     return "#4bc96c";
   });
 };
-const rawData = ref([
-  21221, -5211, 9122, 2663, -1500, 1234, 20221, -4211, -10222, -1101, 1001,
-  4312,
-]);
 
-const labels = ref([
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December",
-]);
+const labels = ref<string[]>([]);
+const rawData = ref<number[]>([]);
+
+const fetchData = async () => {
+  try {
+    const labelsResponse = await fetch("http://localhost:3000/labels");
+    if (!labelsResponse.ok) {
+      throw new Error("Failed to fetch labels");
+    }
+    const labelsData = await labelsResponse.json();
+    console.log("Fetched labels:", labelsData);
+    labels.value = labelsData;
+
+    const balanceResponse = await fetch(
+      "http://localhost:3000/company-balance"
+    );
+    if (!balanceResponse.ok) {
+      throw new Error("Failed to fetch balance");
+    }
+    const balanceData = await balanceResponse.json();
+    console.log("Fetched balance:", balanceData);
+    rawData.value = balanceData;
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  }
+};
+
+onMounted(() => {
+  fetchData();
+});
 
 const chartData = computed(() => ({
   labels: labels.value,
