@@ -17,6 +17,7 @@ import {
   CategoryScale,
   LinearScale,
 } from "chart.js";
+import { useCompanyStore } from "../store/companyStore";
 
 ChartJS.register(
   Title,
@@ -34,41 +35,20 @@ const getBalanceColor = (data: number[]) => {
   });
 };
 
-const labels = ref<string[]>([]);
-const rawData = ref<number[]>([]);
-
-const fetchData = async () => {
-  try {
-    const labelsResponse = await fetch("http://localhost:3000/labels");
-    if (!labelsResponse.ok) {
-      throw new Error("Failed to fetch labels");
-    }
-    const labelsData = await labelsResponse.json();
-    console.log("Fetched labels:", labelsData);
-    labels.value = labelsData;
-
-    const balanceResponse = await fetch(
-      "http://localhost:3000/company-balance"
-    );
-    if (!balanceResponse.ok) {
-      throw new Error("Failed to fetch balance");
-    }
-    const balanceData = await balanceResponse.json();
-    console.log("Fetched balance:", balanceData);
-    rawData.value = balanceData;
-  } catch (error) {
-    console.error("Error fetching data:", error);
-  }
-};
+const companyStore = useCompanyStore();
 
 onMounted(() => {
-  fetchData();
+  companyStore.fetchLabels();
+  companyStore.fetchCompanyBalance();
 });
 
 const chartData = computed(() => ({
-  labels: labels.value,
+  labels: companyStore.labels,
   datasets: [
-    { data: rawData.value, backgroundColor: getBalanceColor(rawData.value) },
+    {
+      data: companyStore.balance,
+      backgroundColor: getBalanceColor(companyStore.balance),
+    },
   ],
 }));
 

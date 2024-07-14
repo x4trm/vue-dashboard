@@ -6,21 +6,25 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed, ref, onMounted } from "vue";
 import { Pie } from "vue-chartjs";
 import { Chart as ChartJS, Title, Tooltip, Legend, ArcElement } from "chart.js";
+import { useCompanyStore } from "../store/companyStore";
 
 ChartJS.register(Title, Tooltip, Legend, ArcElement);
 
-const rawData = ref([22, 34, 11, 64]);
+const companyStore = useCompanyStore();
 
-const labels = ref(["HR", "FINANCES", "IT", "SALES"]);
+onMounted(() => {
+  companyStore.fetchDepartments();
+  companyStore.fetchNumbersOfEmployees();
+});
 
 const chartData = computed(() => ({
-  labels: labels.value,
+  labels: companyStore.departments,
   datasets: [
     {
-      data: rawData.value,
+      data: companyStore.employees,
       backgroundColor: ["#4bc96c", "#588860", "#D7F9DB", "#354573"],
       borderColor: ["#4bc96c", "#588860", "#D7F9DB", "#354573"],
     },

@@ -5,18 +5,12 @@ import { AppService } from './app.service';
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
-  @Get('company-income')
-  getCompanyIncome(): number[] {
-    return this.appService.getCompanyIncome();
-  }
-
-  @Get('company-expenses')
-  getCompanyExpenses(): number[] {
-    return this.appService.getCompanyExpenses();
-  }
-
-  @Get('company-balance')
-  getCompanyBalance(): number[] {
+  @Get('company-finance')
+  getCompanyBalance(): {
+    balance: number[];
+    expenses: number[];
+    incomes: number[];
+  } {
     return this.appService.getCompanyBalance();
   }
 
@@ -38,5 +32,10 @@ export class AppController {
   @Get('q-labels')
   getQuarter(): string[] {
     return this.appService.getQuarter();
+  }
+
+  @Get('department')
+  getDepartment(): string[] {
+    return this.appService.getDepartment();
   }
 }

@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class AppService {
-  getCompanyIncome(): number[] {
+  private getCompanyIncome(): number[] {
     const incomes: number[] = [];
     const min = 0;
     const max = 100000;
@@ -15,7 +15,7 @@ export class AppService {
     return incomes;
   }
 
-  getCompanyExpenses(): number[] {
+  private getCompanyExpenses(): number[] {
     const expenses: number[] = [];
     const min = 0;
     const max = 100000;
@@ -28,16 +28,24 @@ export class AppService {
     return expenses;
   }
 
-  getCompanyBalance(): number[] {
+  getCompanyBalance(): {
+    balance: number[];
+    expenses: number[];
+    incomes: number[];
+  } {
     const incomes = this.getCompanyIncome();
     const expenses = this.getCompanyExpenses();
     const balance: number[] = [];
 
-    for (let i = 0; i < incomes.length; i++) {
+    for (let i = 0; i < 12; i++) {
       balance.push(incomes[i] - expenses[i]);
     }
 
-    return balance;
+    return {
+      balance: balance,
+      expenses: expenses,
+      incomes: incomes,
+    };
   }
 
   getNumbersOfEmployees(): number[] {
@@ -87,5 +95,9 @@ export class AppService {
 
   getQuarter(): string[] {
     return ['I', 'II', 'III', 'IV'];
+  }
+
+  getDepartment(): string[] {
+    return ['HR', 'FINANCES', 'IT', 'SALES'];
   }
 }

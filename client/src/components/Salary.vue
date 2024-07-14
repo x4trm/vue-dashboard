@@ -5,7 +5,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed, ref, onMounted } from "vue";
 import { PolarArea } from "vue-chartjs";
 import {
   Chart as ChartJS,
@@ -17,6 +17,7 @@ import {
   LinearScale,
   RadialLinearScale,
 } from "chart.js";
+import { useCompanyStore } from "../store/companyStore";
 
 ChartJS.register(
   Title,
@@ -28,14 +29,18 @@ ChartJS.register(
   RadialLinearScale
 );
 
-const labels = ref(["I", "II", "III", "IV"]);
-const rawData = ref([124020, 126500, 99890, 135000]);
+const companyStore = useCompanyStore();
+
+onMounted(() => {
+  companyStore.fetchQuarter();
+  companyStore.fetchSalary();
+});
 
 const chartData = computed(() => ({
-  labels: labels.value,
+  labels: companyStore.quarterLabels,
   datasets: [
     {
-      data: rawData.value,
+      data: companyStore.salary,
       backgroundColor: [
         "rgba(128, 128, 128, 0.6)",
         "rgba(122, 125, 129, 0.6)",
@@ -70,13 +75,13 @@ const chartOptions = ref({
   scales: {
     r: {
       grid: {
-        color: "#EDEDED", // Kolor siatki
+        color: "#EDEDED",
       },
       angleLines: {
-        color: "#EDEDED", // Kolor linii promieniowych
+        color: "#EDEDED",
       },
       ticks: {
-        color: "#000", // Kolor tekstu etykiet
+        color: "#000",
       },
     },
   },

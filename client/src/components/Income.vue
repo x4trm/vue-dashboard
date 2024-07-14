@@ -6,7 +6,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed, ref, onMounted } from "vue";
 import { Bar } from "vue-chartjs";
 import {
   Chart as ChartJS,
@@ -17,6 +17,7 @@ import {
   CategoryScale,
   LinearScale,
 } from "chart.js";
+import { useCompanyStore } from "../store/companyStore";
 
 ChartJS.register(
   Title,
@@ -26,27 +27,6 @@ ChartJS.register(
   CategoryScale,
   LinearScale
 );
-
-// TODO: Change data to data from API
-const rawData = ref([
-  40921, 20912, 12912, 13442, 15121, 22009, 55981, 91765, 73771, 56001, 44231,
-  21222,
-]);
-
-const labels = ref([
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December",
-]);
 
 const getColorBasedOnValue = (data: number[]) => {
   const max = Math.max(...data);
@@ -58,13 +38,20 @@ const getColorBasedOnValue = (data: number[]) => {
   });
 };
 
+const companyStore = useCompanyStore();
+
+onMounted(() => {
+  companyStore.fetchLabels();
+  companyStore.fetchCompanyBalance();
+});
+
 const chartData = computed(() => ({
-  labels: labels.value,
+  labels: companyStore.labels,
   datasets: [
     {
       label: "Company Income",
-      data: rawData.value,
-      backgroundColor: getColorBasedOnValue(rawData.value),
+      data: companyStore.incomes,
+      backgroundColor: getColorBasedOnValue(companyStore.incomes),
     },
   ],
 }));
@@ -102,4 +89,3 @@ const chartOptions = ref({
   },
 });
 </script>
-<style scoped></style>

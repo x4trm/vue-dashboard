@@ -5,7 +5,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed, ref, onMounted } from "vue";
 import { Bar } from "vue-chartjs";
 import {
   Chart as ChartJS,
@@ -16,6 +16,7 @@ import {
   CategoryScale,
   LinearScale,
 } from "chart.js";
+import { useCompanyStore } from "../store/companyStore";
 
 ChartJS.register(
   Title,
@@ -25,26 +26,6 @@ ChartJS.register(
   CategoryScale,
   LinearScale
 );
-
-const rawData = ref([
-  -21221, -5211, -9122, -2663, -1500, -1234, -20221, -4211, -10222, -1101,
-  -1001, -4312,
-]);
-
-const labels = ref([
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December",
-]);
 
 const getColorBasedOnValue = (data: number[]) => {
   const max = Math.max(...data);
@@ -56,12 +37,19 @@ const getColorBasedOnValue = (data: number[]) => {
   });
 };
 
+const companyStore = useCompanyStore();
+
+onMounted(() => {
+  companyStore.fetchLabels();
+  companyStore.fetchCompanyBalance();
+});
+
 const chartData = computed(() => ({
-  labels: labels.value,
+  labels: companyStore.labels,
   datasets: [
     {
-      data: rawData.value,
-      backgroundColor: getColorBasedOnValue(rawData.value),
+      data: companyStore.expenses,
+      backgroundColor: getColorBasedOnValue(companyStore.expenses),
     },
   ],
 }));
